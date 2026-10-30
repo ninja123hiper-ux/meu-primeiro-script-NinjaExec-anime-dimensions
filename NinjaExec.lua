@@ -1,5 +1,5 @@
 --[[
-    NinjaExec Hub - V2.0 (Hitbox Center + Filtro de Boss)
+    NinjaExec Hub - V30 (Botão do Discord Integrado)
 ]]
 
 local Players = game:GetService("Players")
@@ -30,13 +30,11 @@ local Config = {
     InfiniteDash = false, 
     SpyDash = false,      
 
-    -- Configurações de Voo Tático
     FlyPosition = "Centro (Hitbox)", 
     FlyDistance = 10,
     FlyHeight = 5,
     TweenSpeed = 500,
     
-    -- Filtro de Alvo
     TargetFilter = "Todos os NPCs",
 }
 
@@ -98,21 +96,16 @@ function Utils.NoclipTick()
     end
 end
 
--- Verifica se o NPC é um Boss
 function Utils.IsBoss(model)
     local name = string.lower(model.Name)
     if string.find(name, "boss") or string.find(name, "raid") or string.find(name, "king") or string.find(name, "lord") or string.find(name, "elite") then
         return true
     end
-    -- Bosses geralmente são gigantes (tamanho da hitbox)
     local hrp = model:FindFirstChild("HumanoidRootPart")
-    if hrp and hrp.Size.Magnitude > 20 then 
-        return true 
-    end
+    if hrp and hrp.Size.Magnitude > 20 then return true end
     return false
 end
 
--- Encontra o NPC mais próximo (Com Filtro)
 function Utils.GetNearestNPC()
     local myRoot = Utils.GetRoot()
     if not myRoot then return nil, nil end
@@ -126,7 +119,6 @@ function Utils.GetNearestNPC()
             local root = obj:FindFirstChild("HumanoidRootPart")
             
             if hum and root and hum.Health > 0 and root.Position.Y > -50 then
-                -- Se o filtro for "Apenas Boss", ignora quem não for boss
                 if Config.TargetFilter == "Apenas Boss" and not Utils.IsBoss(obj) then
                     continue
                 end
@@ -143,7 +135,6 @@ function Utils.GetNearestNPC()
     return nearest, nearestModel
 end
 
--- VOO TÁTICO (Foco total na Hitbox se escolhido)
 function Utils.FlyToTarget()
     local myRoot = Utils.GetRoot()
     if not myRoot then return end
@@ -156,9 +147,8 @@ function Utils.FlyToTarget()
         local targetCFrame = target.CFrame
         local finalPos
 
-        -- Calcula a posição de voo baseada na escolha do Dropdown
         if Config.FlyPosition == "Centro (Hitbox)" then
-            finalPos = targetCFrame -- Fica exatamente no centro do NPC
+            finalPos = targetCFrame 
         elseif Config.FlyPosition == "Frente" then 
             finalPos = targetCFrame * CFrame.new(0, Config.FlyHeight, -Config.FlyDistance) 
         elseif Config.FlyPosition == "Atrás" then 
@@ -176,7 +166,6 @@ function Utils.FlyToTarget()
         local hum = LP.Character and LP.Character:FindFirstChildOfClass("Humanoid")
         if hum then hum.PlatformStand = true end
         
-        -- Voo suave
         if (myRoot.Position - finalPos.Position).Magnitude > 2 then
             if Tween then Tween:Cancel() end
             local tweenInfo = TweenInfo.new((myRoot.Position - finalPos.Position).Magnitude / Config.TweenSpeed, Enum.EasingStyle.Linear)
@@ -186,7 +175,6 @@ function Utils.FlyToTarget()
             myRoot.CFrame = finalPos
         end
         
-        -- FORÇA O PERSONAGEM A OLHAR PARA O NPC
         myRoot.CFrame = CFrame.new(myRoot.Position, target.Position)
     else
         CurrentTargetModel = nil
@@ -224,9 +212,6 @@ function Utils.AutoReplayTick()
     end
 end
 
--- ==========================================
--- COMBATE
--- ==========================================
 function Utils.UseSkill(skillNumber)
     local myRoot = Utils.GetRoot()
     if not myRoot then return end
@@ -349,7 +334,7 @@ task.spawn(function() while task.wait(0.1) do Utils.DoBasicAttack() end end)
 task.spawn(function() while task.wait(0.05) do Utils.DashTick() end end)
 
 -- ==========================================
--- INTERFACE GRÁFICA PREMIUM (V27)
+-- INTERFACE GRÁFICA PREMIUM (V30)
 -- ==========================================
 local function CreateWindow()
     local ScreenGui = Instance.new("ScreenGui")
@@ -374,8 +359,8 @@ local function CreateWindow()
     MiniStroke.Thickness = 2
 
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 600, 0, 860)
-    MainFrame.Position = UDim2.new(0.5, -300, 0.5, -430)
+    MainFrame.Size = UDim2.new(0, 600, 0, 880) 
+    MainFrame.Position = UDim2.new(0.5, -300, 0.5, -440)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
     MainFrame.BackgroundTransparency = 0.1
     MainFrame.BorderSizePixel = 0
@@ -413,7 +398,7 @@ local function CreateWindow()
     Title.Size = UDim2.new(1, -100, 1, 0)
     Title.Position = UDim2.new(0, 15, 0, 0)
     Title.BackgroundTransparency = 1
-    Title.Text = "NINJAEXEC | ULTIMATE"
+    Title.Text = "ninjaExec | ULTIMATE HUB"
     Title.TextColor3 = Color3.fromRGB(255, 255, 255)
     Title.Font = Enum.Font.GothamBlack
     Title.TextSize = 18
@@ -489,7 +474,7 @@ local function CreateWindow()
     CloseBtn.MouseButton1Click:Connect(function() ScreenGui:Destroy() end)
 
     local ContentFrame = Instance.new("Frame")
-    ContentFrame.Size = UDim2.new(1, -20, 1, -60)
+    ContentFrame.Size = UDim2.new(1, -20, 1, -120) 
     ContentFrame.Position = UDim2.new(0, 10, 0, 50)
     ContentFrame.BackgroundTransparency = 1
     ContentFrame.Parent = MainFrame
@@ -617,7 +602,6 @@ local function CreateWindow()
     AddModernToggle(ContentFrame, "⚡ Ativar Dash (Espião)", "SpyDash", false, 300)
     AddModernToggle(ContentFrame, "⚡ Dash Infinito (Após Espiar)", "InfiniteDash", false, 350)
 
-    -- Dropdown Posição do Voo
     AddModernDropdown(ContentFrame, "Posição do Voo", {
         "Centro (Hitbox)",
         "Frente", 
@@ -628,11 +612,72 @@ local function CreateWindow()
         "Em Baixo"
     }, "FlyPosition", "Centro (Hitbox)", 400)
 
-    -- Dropdown Filtro de Alvo
     AddModernDropdown(ContentFrame, "Alvo de Foco", {
         "Todos os NPCs",
         "Apenas Boss"
     }, "TargetFilter", "Todos os NPCs", 475)
+
+    -- ==========================================
+    -- RODAPÉ COM BOTÃO DO DISCORD
+    -- ==========================================
+    local Footer = Instance.new("Frame")
+    Footer.Size = UDim2.new(1, -20, 0, 40)
+    Footer.Position = UDim2.new(0, 10, 1, -50)
+    Footer.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
+    Footer.BackgroundTransparency = 0.5
+    Footer.BorderSizePixel = 0
+    Footer.Parent = MainFrame
+    Instance.new("UICorner", Footer).CornerRadius = UDim.new(0, 8)
+
+    local FooterText = Instance.new("TextLabel")
+    FooterText.Size = UDim2.new(0.5, 0, 1, 0)
+    FooterText.Position = UDim2.new(0, 10, 0, 0)
+    FooterText.BackgroundTransparency = 1
+    FooterText.Text = "Criado por: ninjaExec"
+    FooterText.TextColor3 = Color3.fromRGB(150, 150, 160)
+    FooterText.Font = Enum.Font.GothamSemibold
+    FooterText.TextSize = 13
+    FooterText.TextXAlignment = Enum.TextXAlignment.Left
+    FooterText.Parent = Footer
+
+    -- BOTÃO DO DISCORD CLICÁVEL
+    local DiscordBtn = Instance.new("TextButton")
+    DiscordBtn.Size = UDim2.new(0, 140, 0, 26)
+    DiscordBtn.Position = UDim2.new(1, -150, 0.5, -13)
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Cor oficial do Discord
+    DiscordBtn.Text = "Entrar no Discord"
+    DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
+    DiscordBtn.Font = Enum.Font.GothamBold
+    DiscordBtn.TextSize = 12
+    DiscordBtn.AutoButtonColor = false
+    DiscordBtn.Parent = Footer
+    Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(0, 6)
+
+    -- Animação Hover do Botão do Discord
+    DiscordBtn.MouseEnter:Connect(function()
+        TweenService:Create(DiscordBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(110, 120, 255)}):Play()
+    end)
+    DiscordBtn.MouseLeave:Connect(function()
+        TweenService:Create(DiscordBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(88, 101, 242)}):Play()
+    end)
+
+    -- Ação de clicar no botão
+    DiscordBtn.MouseButton1Click:Connect(function()
+        local link = "https://discord.gg/PfCsn6Quv"
+        pcall(function()
+            setclipboard(link) -- Copia o link para a área de transferência
+        end)
+        pcall(function()
+            -- Tenta abrir o link no navegador/celular
+            game:GetService("GuiService"):OpenBrowserWindow(link)
+        end)
+        
+        StarterGui:SetCore("SendNotification", {
+            Title = "Discord",
+            Text = "Link copiado! Se não abriu, cole no seu navegador.",
+            Duration = 5
+        })
+    end)
 end
 
 pcall(CreateWindow)
