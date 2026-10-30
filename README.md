@@ -1,0 +1,1 @@
+# meu-primeiro-script-NinjaExec-anime-dimensions
