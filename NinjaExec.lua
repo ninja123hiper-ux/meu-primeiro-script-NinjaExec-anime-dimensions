@@ -1,5 +1,5 @@
 --[[
-    NinjaExec Hub - V30 (Botão do Discord Integrado)
+    NinjaExec Hub - V31 (Tamanho Ajustado para Celular + Botão Discord)
 ]]
 
 local Players = game:GetService("Players")
@@ -34,7 +34,6 @@ local Config = {
     FlyDistance = 10,
     FlyHeight = 5,
     TweenSpeed = 500,
-    
     TargetFilter = "Todos os NPCs",
 }
 
@@ -334,7 +333,7 @@ task.spawn(function() while task.wait(0.1) do Utils.DoBasicAttack() end end)
 task.spawn(function() while task.wait(0.05) do Utils.DashTick() end end)
 
 -- ==========================================
--- INTERFACE GRÁFICA PREMIUM (V30)
+-- INTERFACE GRÁFICA PREMIUM (V31 - Tamanho Celular)
 -- ==========================================
 local function CreateWindow()
     local ScreenGui = Instance.new("ScreenGui")
@@ -359,8 +358,9 @@ local function CreateWindow()
     MiniStroke.Thickness = 2
 
     local MainFrame = Instance.new("Frame")
-    MainFrame.Size = UDim2.new(0, 600, 0, 880) 
-    MainFrame.Position = UDim2.new(0.5, -300, 0.5, -440)
+    -- Tamanho reduzido de 880 para 700 para caber no celular
+    MainFrame.Size = UDim2.new(0, 580, 0, 700) 
+    MainFrame.Position = UDim2.new(0.5, -290, 0.5, -350)
     MainFrame.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
     MainFrame.BackgroundTransparency = 0.1
     MainFrame.BorderSizePixel = 0
@@ -481,7 +481,7 @@ local function CreateWindow()
 
     local function AddModernToggle(parent, text, key, default, yPos)
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, 0, 0, 40)
+        btn.Size = UDim2.new(1, 0, 0, 35) -- Altura reduzida de 40 para 35
         btn.Position = UDim2.new(0, 0, 0, yPos)
         btn.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
         btn.BackgroundTransparency = 0.3
@@ -528,7 +528,7 @@ local function CreateWindow()
 
     local function AddModernDropdown(parent, text, options, key, default, yPos)
         local frame = Instance.new("Frame")
-        frame.Size = UDim2.new(1, 0, 0, 65)
+        frame.Size = UDim2.new(1, 0, 0, 55) -- Altura reduzida
         frame.Position = UDim2.new(0, 0, 0, yPos)
         frame.BackgroundColor3 = Color3.fromRGB(25, 25, 35)
         frame.BackgroundTransparency = 0.3
@@ -542,25 +542,25 @@ local function CreateWindow()
         label.Text = text .. " (Atual: " .. default .. ")"
         label.TextColor3 = Color3.fromRGB(200, 200, 210)
         label.Font = Enum.Font.Gotham
-        label.TextSize = 12
+        label.TextSize = 11
         label.TextXAlignment = Enum.TextXAlignment.Left
         label.Parent = frame
 
         local btn = Instance.new("TextButton")
-        btn.Size = UDim2.new(1, -20, 0, 25)
-        btn.Position = UDim2.new(0, 10, 0, 25)
+        btn.Size = UDim2.new(1, -20, 0, 22)
+        btn.Position = UDim2.new(0, 10, 0, 22)
         btn.BackgroundColor3 = Color3.fromRGB(15, 15, 20)
         btn.BackgroundTransparency = 0.5
         btn.Text = default
         btn.TextColor3 = Color3.fromRGB(0, 255, 150)
         btn.Font = Enum.Font.GothamBold
-        btn.TextSize = 13
+        btn.TextSize = 12
         btn.Parent = frame
         Instance.new("UICorner", btn).CornerRadius = UDim.new(0, 6)
 
         local list = Instance.new("Frame")
-        list.Size = UDim2.new(1, -20, 0, #options * 25)
-        list.Position = UDim2.new(0, 10, 0, 55)
+        list.Size = UDim2.new(1, -20, 0, #options * 22)
+        list.Position = UDim2.new(0, 10, 0, 45)
         list.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
         list.Visible = false
         list.ZIndex = 10
@@ -569,13 +569,13 @@ local function CreateWindow()
 
         btn.MouseButton1Click:Connect(function()
             list.Visible = not list.Visible
-            frame.Size = list.Visible and UDim2.new(1, 0, 0, 65 + #options * 25) or UDim2.new(1, 0, 0, 65)
+            frame.Size = list.Visible and UDim2.new(1, 0, 0, 55 + #options * 22) or UDim2.new(1, 0, 0, 55)
         end)
 
         for i, opt in ipairs(options) do
             local optBtn = Instance.new("TextButton")
-            optBtn.Size = UDim2.new(1, 0, 0, 25)
-            optBtn.Position = UDim2.new(0, 0, 0, (i-1)*25)
+            optBtn.Size = UDim2.new(1, 0, 0, 22)
+            optBtn.Position = UDim2.new(0, 0, 0, (i-1)*22)
             optBtn.BackgroundColor3 = Color3.fromRGB(20, 20, 30)
             optBtn.Text = opt
             optBtn.TextColor3 = Color3.fromRGB(200, 200, 210)
@@ -588,19 +588,20 @@ local function CreateWindow()
                 btn.Text = opt
                 label.Text = text .. " (Atual: " .. opt .. ")"
                 list.Visible = false
-                frame.Size = UDim2.new(1, 0, 0, 65)
+                frame.Size = UDim2.new(1, 0, 0, 55)
             end)
         end
     end
 
-    AddModernToggle(ContentFrame, "🔥 Kill Aura (Voo Tático + Touch)", "KillAura", false, 0)
-    AddModernToggle(ContentFrame, "⚡ Auto Skill (1-5)", "AutoSkill", false, 50)
-    AddModernToggle(ContentFrame, "👊 Auto Click (Virtual M1)", "AutoClick", false, 100)
-    AddModernToggle(ContentFrame, "💨 Auto Dodge", "AutoDodge", false, 150)
-    AddModernToggle(ContentFrame, "👻 Noclip", "Noclip", false, 200)
-    AddModernToggle(ContentFrame, "🔄 Auto Replay", "AutoReplay", false, 250)
-    AddModernToggle(ContentFrame, "⚡ Ativar Dash (Espião)", "SpyDash", false, 300)
-    AddModernToggle(ContentFrame, "⚡ Dash Infinito (Após Espiar)", "InfiniteDash", false, 350)
+    -- Reposicionamento para caber na tela menor
+    AddModernToggle(ContentFrame, "🔥 Kill Aura (Voo Tático)", "KillAura", false, 0)
+    AddModernToggle(ContentFrame, "⚡ Auto Skill (1-5)", "AutoSkill", false, 40)
+    AddModernToggle(ContentFrame, "👊 Auto Click (Virtual M1)", "AutoClick", false, 80)
+    AddModernToggle(ContentFrame, "💨 Auto Dodge", "AutoDodge", false, 120)
+    AddModernToggle(ContentFrame, "👻 Noclip", "Noclip", false, 160)
+    AddModernToggle(ContentFrame, "🔄 Auto Replay", "AutoReplay", false, 200)
+    AddModernToggle(ContentFrame, "⚡ Ativar Dash (Espião)", "SpyDash", false, 240)
+    AddModernToggle(ContentFrame, "⚡ Dash Infinito", "InfiniteDash", false, 280)
 
     AddModernDropdown(ContentFrame, "Posição do Voo", {
         "Centro (Hitbox)",
@@ -610,12 +611,12 @@ local function CreateWindow()
         "Lado Esquerdo", 
         "Em Cima", 
         "Em Baixo"
-    }, "FlyPosition", "Centro (Hitbox)", 400)
+    }, "FlyPosition", "Centro (Hitbox)", 320)
 
     AddModernDropdown(ContentFrame, "Alvo de Foco", {
         "Todos os NPCs",
         "Apenas Boss"
-    }, "TargetFilter", "Todos os NPCs", 475)
+    }, "TargetFilter", "Todos os NPCs", 385)
 
     -- ==========================================
     -- RODAPÉ COM BOTÃO DO DISCORD
@@ -636,24 +637,22 @@ local function CreateWindow()
     FooterText.Text = "Criado por: ninjaExec"
     FooterText.TextColor3 = Color3.fromRGB(150, 150, 160)
     FooterText.Font = Enum.Font.GothamSemibold
-    FooterText.TextSize = 13
+    FooterText.TextSize = 12
     FooterText.TextXAlignment = Enum.TextXAlignment.Left
     FooterText.Parent = Footer
 
-    -- BOTÃO DO DISCORD CLICÁVEL
     local DiscordBtn = Instance.new("TextButton")
-    DiscordBtn.Size = UDim2.new(0, 140, 0, 26)
-    DiscordBtn.Position = UDim2.new(1, -150, 0.5, -13)
-    DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242) -- Cor oficial do Discord
+    DiscordBtn.Size = UDim2.new(0, 130, 0, 26)
+    DiscordBtn.Position = UDim2.new(1, -140, 0.5, -13)
+    DiscordBtn.BackgroundColor3 = Color3.fromRGB(88, 101, 242) 
     DiscordBtn.Text = "Entrar no Discord"
     DiscordBtn.TextColor3 = Color3.fromRGB(255, 255, 255)
     DiscordBtn.Font = Enum.Font.GothamBold
-    DiscordBtn.TextSize = 12
+    DiscordBtn.TextSize = 11
     DiscordBtn.AutoButtonColor = false
     DiscordBtn.Parent = Footer
     Instance.new("UICorner", DiscordBtn).CornerRadius = UDim.new(0, 6)
 
-    -- Animação Hover do Botão do Discord
     DiscordBtn.MouseEnter:Connect(function()
         TweenService:Create(DiscordBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(110, 120, 255)}):Play()
     end)
@@ -661,16 +660,10 @@ local function CreateWindow()
         TweenService:Create(DiscordBtn, TweenInfo.new(0.2), {BackgroundColor3 = Color3.fromRGB(88, 101, 242)}):Play()
     end)
 
-    -- Ação de clicar no botão
     DiscordBtn.MouseButton1Click:Connect(function()
         local link = "https://discord.gg/PfCsn6Quv"
-        pcall(function()
-            setclipboard(link) -- Copia o link para a área de transferência
-        end)
-        pcall(function()
-            -- Tenta abrir o link no navegador/celular
-            game:GetService("GuiService"):OpenBrowserWindow(link)
-        end)
+        pcall(function() setclipboard(link) end)
+        pcall(function() game:GetService("GuiService"):OpenBrowserWindow(link) end)
         
         StarterGui:SetCore("SendNotification", {
             Title = "Discord",
